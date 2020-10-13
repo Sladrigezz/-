@@ -153,8 +153,9 @@
             var textComment = document.querySelector('.text__description')
             var input = document.querySelector('.img-upload__input')
             var formClose = document.querySelector('.img-upload__overlay')
-            formClose.classList.add('hidden');
             clearFilter()
+            ImgUploadScale.classList.add('hidden');
+            formClose.classList.add('hidden');
             effectNoneChecked.checked = true
             textHastag.value = ""
             textComment.value = ""
