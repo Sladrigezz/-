@@ -30,10 +30,10 @@
             var socialCommentslist = document.createElement('li');
             socialCommentslist.classList.add('social__comment')
             socialCommentslist.classList.add('social__comment--text')
-            socialCommentslist.innerHTML = '<img class="social__picture" src="img/avatar-'
-                + window.getRandomArbitrary(1, 6) +
-                '.svg" alt="Аватар комментатора фотографии" width="35" height="35"> <p class="social__text">'
-                + photo.comments[index] + '</p>';
+            socialCommentslist.innerHTML = '<img class="social__picture" src="'
+                + photo.comments[index].avatar +
+                '" alt="Аватар комментатора фотографии" width="35" height="35"> <p class="social__text">'
+                + photo.comments[index].message + '</p>';
             commentsList.appendChild(socialCommentslist)
         }
     }
@@ -57,6 +57,7 @@
     uploadFile.addEventListener('change', function () {
         imgUploadOverlay.classList.remove('hidden');
     });
+
     buttonClose.addEventListener('click', function () {
         imgUploadOverlay.classList.add('hidden');
     });

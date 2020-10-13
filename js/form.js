@@ -1,4 +1,9 @@
 // модуль, который работает с формой редактирования изображения.
+
+// Данный модуль не предназначен для редактирования настоящего изображения.
+// При выборе любого изображения будет открыта картинка с котиком, которую можно редактировать.
+
+
 'use strict';
 
 (function () {
@@ -33,7 +38,7 @@
         ImgUploadScale.classList.remove('hidden');
     }
 
-    // Функцию, задающие currentFilter
+    // Функции, задающие currentFilter
     // Нажатине на "стандартний" фильтр
     effectNone.addEventListener('click', function () {
         currentFilter = null;
@@ -134,4 +139,27 @@
     scalePinHendler.ondragstart = function () {
         return false;
     };
-})()
+
+
+    // Отправка на сервер отредактированной фотографии и сброс 
+    // всех эффектов и значений (для возможности повторно выбирать одно и то же изображение несколько раз)
+
+    var form = document.querySelector('.img-upload__form')
+    form.addEventListener('submit', function(evt){
+        evt.preventDefault();
+        window.backend.sendData(new FormData(form), function(response){
+            var effectNoneChecked = document.getElementById('effect-none')
+            var textHastag = document.querySelector('.text__hashtags')
+            var textComment = document.querySelector('.text__description')
+            var input = document.querySelector('.img-upload__input')
+            var formClose = document.querySelector('.img-upload__overlay')
+            formClose.classList.add('hidden');
+            clearFilter()
+            effectNoneChecked.checked = true
+            textHastag.value = ""
+            textComment.value = ""
+            input.value = ""
+        });
+        
+    });
+})();
