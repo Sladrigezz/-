@@ -9,7 +9,7 @@
     window.backend.loadData(
         function(response){
             window.photosArray = response;
-            window.renderPicture();
+            window.renderPicture(window.photosArray);
         },
         function(error){
             console.error(error)

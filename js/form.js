@@ -1,16 +1,50 @@
-// модуль, который работает с формой редактирования изображения.
+// Модуль, который работает с формой редактирования изображения.
 
-// Данный модуль не предназначен для редактирования настоящего изображения.
-// При выборе любого изображения будет открыта картинка с котиком, которую можно редактировать.
-
+// Можно загрузить любое изображение и редактировать его.
 
 'use strict';
 
 (function () {
+
+    var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png']
+
+    // Открыть редактор фотографии и загрузить фото
+    var imgUploadOverlay = document.querySelector('.img-upload__overlay')
+    var uploadFile = document.querySelector('.img-upload__start input[type=file]');
+    var buttonClose = document.querySelector('.img-upload__cancel')
+    var imgUploadPreview = document.querySelector('.img-upload__preview img')
+
+    uploadFile.addEventListener('change', function () {
+        var file = uploadFile.files[0];
+        var fileName = file.name.toLowerCase();
+
+        var matches = FILE_TYPES.some(function (it) {
+            return fileName.endsWith(it);
+        });
+
+        if (matches) {
+            var reader = new FileReader();
+
+            reader.addEventListener('load', function () {
+                imgUploadPreview.src = reader.result;
+            });
+
+            reader.readAsDataURL(file);
+        }
+        imgUploadOverlay.classList.remove('hidden');
+        imgUploadPreview.style.transform = 'scale(' + 1 + ')'
+        document.querySelector('.img-upload__resize').style.zIndex = "1"
+    });
+
+    // Закрыть
+    buttonClose.addEventListener('click', function () {
+        imgUploadOverlay.classList.add('hidden');
+    });
+
+
     var scaleLine = document.querySelector('.scale__line')
     var scalePinHendler = scaleLine.querySelector('.scale__pin')
     var scaleLevelHendler = scaleLine.querySelector('.scale__level')
-    var imgUploadPreview = document.querySelector('.img-upload__preview')
     var effectChrome = document.querySelector('.effects__preview--chrome')
     var effectSepia = document.querySelector('.effects__preview--sepia')
     var effectMarvin = document.querySelector('.effects__preview--marvin')
@@ -18,7 +52,7 @@
     var effectHeat = document.querySelector('.effects__preview--heat')
     var effectNone = document.querySelector('.effects__preview--none')
     var ImgUploadScale = document.querySelector('.img-upload__scale')
-    
+
     // Фильтры
     var filters = {
         grayscale: 'grayscale',
@@ -76,6 +110,28 @@
         clearFilter()
     })
 
+    // Изменение размера картинки
+    var resizeMinus = document.querySelector('.resize__control--minus')
+    var resizePlus = document.querySelector('.resize__control--plus')
+    var resizeValue = document.querySelector('.resize__control--value')
+
+    resizeMinus.addEventListener('click', function(evt){
+        evt.preventDefault()
+        resizeValue.value = Number(resizeValue.value.split('%')[0]) - 10 + '%'
+        if (Number(resizeValue.value.split('%')[0]) < 50) {
+            resizeValue.value = 50 + '%'
+        }
+        imgUploadPreview.style.transform = 'scale(' + Number(resizeValue.value.split('%')[0])/100 + ')'
+    })
+
+    resizePlus.addEventListener('click', function(evt){
+        evt.preventDefault()
+        resizeValue.value = Number(resizeValue.value.split('%')[0]) + 10 + '%'
+        if (Number(resizeValue.value.split('%')[0]) > 100) {
+            resizeValue.value = 100 + '%'
+        }
+        imgUploadPreview.style.transform = 'scale(' + Number(resizeValue.value.split('%')[0])/100 + ')'
+    })
 
     // Перемещение ползунка фильтров
     scalePinHendler.onmousedown = function (evt) {
@@ -145,9 +201,9 @@
     // всех эффектов и значений (для возможности повторно выбирать одно и то же изображение несколько раз)
 
     var form = document.querySelector('.img-upload__form')
-    form.addEventListener('submit', function(evt){
+    form.addEventListener('submit', function (evt) {
         evt.preventDefault();
-        window.backend.sendData(new FormData(form), function(response){
+        window.backend.sendData(new FormData(form), function (response) {
             var effectNoneChecked = document.getElementById('effect-none')
             var textHastag = document.querySelector('.text__hashtags')
             var textComment = document.querySelector('.text__description')
@@ -161,6 +217,6 @@
             textComment.value = ""
             input.value = ""
         });
-        
+
     });
 })();
